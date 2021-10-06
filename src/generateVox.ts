@@ -1,4 +1,5 @@
 import type { Model, Color } from './types'
+import Buffer from './Buffer'
 
 const CHUNK_HEADER_SIZE = 12
 const SIZE_CHUNK_SIZE = 12
@@ -44,28 +45,40 @@ function countMainChildrenSize(models: Model[]) {
   )
 }
 
-class Buffer {
-  buffer: ArrayBuffer
-  byteOffset: number
-  textEncoder: TextEncoder
+function writeChunkHeader(
+  buffer: Buffer,
+  id: string,
+  contentSize = 0,
+  childrenSize = 0
+) {
+  buffer.writeString(id).writeInt(contentSize, childrenSize)
+}
 
-  constructor(size: number) {
-    this.buffer = new ArrayBuffer(size)
-    this.byteOffset = 0
-    this.textEncoder = new TextEncoder()
-  }
+function writeSizeChunk(buffer: Buffer, model: Model) {
+  writeChunkHeader(buffer, 'SIZE', SIZE_CHUNK_SIZE)
+  buffer.writeInt(model.width, model.height, model.depth)
+}
 
-  writeInt(...args: number[]) {
-    const view = new Uint32Array(this.buffer, this.byteOffset, args.length)
-    view.set(args)
-    this.byteOffset += view.byteLength
-  }
+function writeModelChunk(buffer: Buffer, model: Model) {
+  writeChunkHeader(buffer, 'XYZI', model.cells.length * 4 + INT_SIZE)
+  buffer.writeInt(model.cells.length)
 
-  writeString(args: string) {
-    const view = new Uint8Array(this.buffer, this.byteOffset, args.length)
-    this.textEncoder.encodeInto(args, view)
-    this.byteOffset += view.byteLength
-  }
+  const chunk = new Uint8Array(
+    buffer.buffer,
+    buffer.byteOffset,
+    model.cells.length * 4
+  )
+
+  model.cells.forEach((cell, index) => {
+    const chunkIndex = index * 4
+
+    chunk[chunkIndex] = cell.x
+    chunk[chunkIndex + 1] = cell.y
+    chunk[chunkIndex + 2] = cell.z
+    chunk[chunkIndex + 3] = cell.i
+  })
+
+  buffer.byteOffset += chunk.byteLength
 }
 
 export default function generateVox(models: Model[], colorMap: Color[]) {
@@ -73,5 +86,5 @@ export default function generateVox(models: Model[], colorMap: Color[]) {
   const size = countMainChildrenSize(models)
   const buffer = new Buffer(size)
 
-  return 'Nothing yet'
+  return buffer.toBlob()
 }

@@ -5,7 +5,7 @@ import generateVox from './generateVox'
 export default function imageToVox(
   image: Image,
   colorMap: Color[],
-  options: Options
+  options: Options = {}
 ) {
   const models = generateModels(image, colorMap, options)
   return generateVox(models, colorMap)
