@@ -70,5 +70,8 @@ class Buffer {
 
 export default function generateVox(models: Model[], colorMap: Color[]) {
   console.log(models, colorMap)
+  const size = countMainChildrenSize(models)
+  const buffer = new Buffer(size)
+
   return 'Nothing yet'
 }
