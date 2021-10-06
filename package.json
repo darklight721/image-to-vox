@@ -1,5 +1,5 @@
 {
-  "name": "imageToVox",
+  "name": "image-to-vox",
   "version": "1.0.0",
   "description": "Converts an image to vox file",
   "engines": {
@@ -21,11 +21,11 @@
   ],
   "author": "Roy Evan Sia",
   "license": "ISC",
-  "homepage": "",
-  "bugs": "",
+  "homepage": "https://github.com/darklight721/image-to-vox#readme",
+  "bugs": "https://github.com/darklight721/image-to-vox/issues",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/darklight721/image-to-vox.git"
   },
   "files": [
     "lib/**/*"
