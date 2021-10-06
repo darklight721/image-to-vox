@@ -1,16 +1,42 @@
 {
   "name": "imageToVox",
   "version": "1.0.0",
-  "description": "",
+  "description": "Converts an image to vox file",
+  "engines": {
+    "node": ">=12.18.0",
+    "npm": ">=6.14.4"
+  },
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepare": "husky install",
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": [],
+  "keywords": [
+    "vox",
+    "voxel",
+    "magicavoxel",
+    "image"
+  ],
   "author": "Roy Evan Sia",
   "license": "ISC",
+  "homepage": "",
+  "bugs": "",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "files": [
+    "lib/**/*"
+  ],
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
+    "husky": "^7.0.2",
+    "lint-staged": "^11.2.0",
+    "prettier": "2.4.1",
     "typescript": "^4.4.3"
   }
 }
