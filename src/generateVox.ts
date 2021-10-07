@@ -81,10 +81,104 @@ function writeModelChunk(buffer: Buffer, model: Model) {
   buffer.byteOffset += chunk.byteLength
 }
 
+function writePaletteChunk(buffer: Buffer, colorMap: Color[]) {
+  writeChunkHeader(buffer, 'RGBA', RGBA_CHUNK_SIZE)
+
+  const chunk = new Uint8Array(
+    buffer.buffer,
+    buffer.byteOffset,
+    RGBA_CHUNK_SIZE
+  )
+
+  colorMap.forEach((color, index) => {
+    const chunkIndex = index * 4
+
+    chunk[chunkIndex] = color.r
+    chunk[chunkIndex + 1] = color.g
+    chunk[chunkIndex + 2] = color.b
+    chunk[chunkIndex + 3] = color.a
+  })
+
+  buffer.byteOffset += chunk.byteLength
+}
+
+function writeMainTransformChunk(buffer: Buffer) {
+  writeChunkHeader(buffer, 'nTRN', MAIN_TRANSFORM_CHUNK_SIZE)
+  buffer.writeInt(
+    0 /* id of nTRN */,
+    0 /* attr size */,
+    1 /* id of nGRP */,
+    -1 /* reserved id */,
+    0 /* layer id */,
+    1 /* num of frames */,
+    0 /* frame content */
+  )
+}
+
+function writeGroupChunk(buffer: Buffer, models: Model[]) {
+  writeChunkHeader(buffer, 'nGRP', GROUP_CHUNK_SIZE + models.length * INT_SIZE)
+  buffer.writeInt(
+    1 /* id of nGRP */,
+    0 /* attr size */,
+    models.length /* num of models */
+  )
+
+  models.forEach((_, index) => buffer.writeInt(2 * index + 2 /* id of nTRN */))
+}
+
+function writeTransformChunk(buffer: Buffer, model: Model, index: number) {
+  const position = getModelPosition(model)
+
+  writeChunkHeader(buffer, 'nTRN', TRANSFORM_CHUNK_SIZE + position.length)
+  buffer
+    .writeInt(
+      2 * index + 2 /* id of nTRN */,
+      0 /* attr size */,
+      2 * index + 3 /* id of nSHP */,
+      -1 /* reserved id */,
+      -1 /* layer id */,
+      1 /* num of frames */,
+      1 /* num of key-value pairs */,
+      2 /* _t size */
+    )
+    .writeString('_t')
+    .writeInt(position.length)
+    .writeString(position)
+}
+
+function writeShapeChunk(buffer: Buffer, index: number) {
+  writeChunkHeader(buffer, 'nSHP', SHAPE_CHUNK_SIZE)
+  buffer.writeInt(
+    2 * index + 3 /* id of nSHP */,
+    0 /* attr size */,
+    1 /* num of models */,
+    index /* model id */,
+    0 /* num of key-value pairs */
+  )
+}
+
 export default function generateVox(models: Model[], colorMap: Color[]) {
-  console.log(models, colorMap)
-  const size = countMainChildrenSize(models)
-  const buffer = new Buffer(size)
+  const childrenSize = countMainChildrenSize(models)
+  const buffer = new Buffer(childrenSize + 4 /* 'VOX ' */ + INT_SIZE)
+
+  buffer.writeString('VOX ').writeInt(150)
+
+  writeChunkHeader(buffer, 'MAIN', 0, childrenSize)
+
+  models.forEach(model => {
+    writeSizeChunk(buffer, model)
+    writeModelChunk(buffer, model)
+  })
+
+  writePaletteChunk(buffer, colorMap)
+
+  writeMainTransformChunk(buffer)
+  writeGroupChunk(buffer, models)
+
+  models.forEach((model, index) => {
+    writeTransformChunk(buffer, model, index)
+    writeShapeChunk(buffer, index)
+  })
 
   return buffer.toBlob()
 }
