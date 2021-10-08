@@ -10,8 +10,17 @@ export default class Buffer {
   }
 
   writeInt(...args: number[]) {
-    const view = new Uint32Array(this.buffer, this.byteOffset, args.length)
-    view.set(args)
+    // not using Uint32Array() here because byteOffset may not be multiple of 4
+    const view = new DataView(
+      this.buffer,
+      this.byteOffset,
+      args.length * Uint32Array.BYTES_PER_ELEMENT
+    )
+
+    args.forEach((arg, index) =>
+      view.setUint32(index * Uint32Array.BYTES_PER_ELEMENT, arg, true)
+    )
+
     this.byteOffset += view.byteLength
 
     return this

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Example</title>
+    <link
+      href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-purple-100">
+    <div class="container mx-auto">
+      <h1 class="text-2xl text-center mt-10 text-purple-600">image-to-vox</h1>
+      <form>
+        <div class="mt-10 flex">
+          <div class="flex-1 flex flex-col items-center p-4">
+            <label
+              class="
+                inline-block
+                cursor-pointer
+                rounded-full
+                py-3
+                px-6
+                bg-purple-500
+                hover:bg-purple-600
+                text-white
+              "
+            >
+              Select an image
+              <input id="imageInput" type="file" accept="image/*" hidden />
+            </label>
+            <div
+              class="
+                rounded-xl
+                bg-purple-200
+                w-80
+                h-80
+                overflow-hidden
+                mt-4
+                p-4
+              "
+            >
+              <img
+                id="image"
+                class="w-full h-full object-cover rounded-xl"
+                src="/sample_image.png"
+              />
+            </div>
+          </div>
+          <div class="flex-1 flex flex-col items-center p-4">
+            <label
+              class="
+                inline-block
+                cursor-pointer
+                rounded-full
+                py-3
+                px-6
+                bg-purple-500
+                hover:bg-purple-600
+                text-white
+              "
+            >
+              Select a color map
+              <input
+                id="colorMapInput"
+                type="file"
+                accept="text/plain"
+                hidden
+              />
+            </label>
+            <div
+              class="
+                rounded-xl
+                bg-purple-200
+                w-80
+                h-80
+                overflow-hidden
+                mt-4
+                p-4
+              "
+            >
+              <iframe
+                id="colorMap"
+                class="w-full h-full rounded-xl bg-white"
+                src="/sample_color_map.txt"
+              >
+              </iframe>
+            </div>
+          </div>
+        </div>
+        <div class="mt-10 flex flex-col items-center">
+          <button
+            id="generateVox"
+            class="
+              rounded-full
+              py-3
+              px-6
+              bg-purple-500
+              hover:bg-purple-600
+              text-white
+            "
+            type="button"
+          >
+            Generate vox file
+          </button>
+          <div id="downloadContainer" class="mt-4"></div>
+        </div>
+      </form>
+    </div>
+    <script type="module" src="./dist/main.js"></script>
+  </body>
+</html>

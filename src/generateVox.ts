@@ -1,14 +1,14 @@
 import type { Model, Color } from './types'
 import Buffer from './Buffer'
 
-const CHUNK_HEADER_SIZE = 12
-const SIZE_CHUNK_SIZE = 12
-const INT_SIZE = 4
-const RGBA_CHUNK_SIZE = 1024 // 4 * 256
-const MAIN_TRANSFORM_CHUNK_SIZE = 28
-const GROUP_CHUNK_SIZE = 12
-const TRANSFORM_CHUNK_SIZE = 38
-const SHAPE_CHUNK_SIZE = 20
+const INT_SIZE = Uint32Array.BYTES_PER_ELEMENT
+const CHUNK_HEADER_SIZE = INT_SIZE * 3
+const SIZE_CHUNK_SIZE = INT_SIZE * 3
+const RGBA_CHUNK_SIZE = 1024 // 4 (r,g,b,a) * 256
+const MAIN_TRANSFORM_CHUNK_SIZE = INT_SIZE * 7
+const GROUP_CHUNK_SIZE = INT_SIZE * 3
+const TRANSFORM_CHUNK_SIZE = INT_SIZE * 9 + 2 // 2 -> _t
+const SHAPE_CHUNK_SIZE = INT_SIZE * 5
 
 function getModelPosition(model: Model) {
   return `${model.x} ${model.y} ${model.z}`
@@ -159,7 +159,12 @@ function writeShapeChunk(buffer: Buffer, index: number) {
 
 export default function generateVox(models: Model[], colorMap: Color[]) {
   const childrenSize = countMainChildrenSize(models)
-  const buffer = new Buffer(childrenSize + 4 /* 'VOX ' */ + INT_SIZE)
+  const buffer = new Buffer(
+    4 /* 'VOX ' */ +
+      INT_SIZE +
+      CHUNK_HEADER_SIZE /* MAIN chunk */ +
+      childrenSize
+  )
 
   buffer.writeString('VOX ').writeInt(150)
 

@@ -4,6 +4,7 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "target": "es6",
+    "module": "es6",
     "declaration": true,
     "outDir": "./lib",
     "allowUnreachableCode": false,

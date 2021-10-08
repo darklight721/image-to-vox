@@ -1,8 +1,10 @@
-export interface Image {
+interface GenericImageData {
   width: number
   height: number
   data: number[]
 }
+
+export type Image = ImageData | GenericImageData
 
 export interface Color {
   r: number
