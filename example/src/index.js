@@ -2,6 +2,7 @@ import imageToVox from '../../lib'
 
 const imageEl = document.querySelector('#image')
 const colorMapEl = document.querySelector('#colorMap')
+const download = document.querySelector('#download')
 
 const canvas = document.createElement('canvas')
 const context = canvas.getContext('2d')
@@ -50,10 +51,6 @@ document.querySelector('#generateVox').addEventListener('click', async () => {
 
   const blob = imageToVox(image, colorMap)
 
-  const link = document.createElement('a')
-  link.download = 'imageToVox.vox'
-  link.href = URL.createObjectURL(blob)
-  link.innerText = 'Download vox file'
-
-  document.querySelector('#downloadContainer').appendChild(link)
+  download.href = URL.createObjectURL(blob)
+  download.classList.remove('hidden')
 })

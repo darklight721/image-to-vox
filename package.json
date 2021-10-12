@@ -11,7 +11,9 @@
   "scripts": {
     "prepare": "husky install",
     "build": "tsc",
-    "example": "npm run build && cd example && npx webpack --mode development -o ./public/dist && npx serve ./public",
+    "example:build": "cd example && webpack --mode development -o ./public/lib",
+    "example:serve": "npx serve ./example/public",
+    "example": "npm run build && npm run example:build && npm run example:serve",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
