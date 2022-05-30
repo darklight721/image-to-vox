@@ -1,4 +1,4 @@
-import { Image, Color, Size, ZColor, Options, Model } from './types'
+import type { Image, Color, Size, ZColor, Options, Model } from './types'
 
 const MAX_MODEL_SIZE = 256
 
